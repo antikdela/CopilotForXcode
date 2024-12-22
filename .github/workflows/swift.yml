@@ -20,4 +20,4 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
-bplist00Ò]canvas_height5132x640\canvas_width2891x640p€ (+.
+bplist00Ò]canvas_height5132\canvas_width2891 p€ (+.
