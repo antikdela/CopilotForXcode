@@ -1,4 +1,83 @@
-# <img align="center" height="70" src="./Docs/AppIcon.png"/> GitHub Copilot for Xcode
+private let sorts = [(
+    name: "Time",
+    descriptors: [SortDescriptor(\Quake.time, order: .reverse)]
+), (
+    name: "Time",
+    descriptors: [SortDescriptor(\Quake.time, order: .forward)]
+), (
+    name: "Magnitude",
+    descriptors: [SortDescriptor(\Quake.magnitude, order: .reverse)]
+), (
+    name: "Magnitude",
+    descriptors: [SortDescriptor(\Quake.magnitude, order: .forward)]
+)]
+
+struct ContentView: View {
+    @FetchRequest(sortDescriptors: [SortDescriptor(\Quake.time, order: .reverse)])
+    private var quakes: FetchedResults<Quake>
+
+    @State private var selectedSort = SelectedSort()
+
+    var body: some View {
+        List(quakes) { quake in
+            QuakeRow(quake: quake)
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                SortMenu(selection: $selectedSort)
+                .onChange(of: selectedSort) { _ in
+                    let sortBy = sorts[selectedSort.index]
+                    quakes.sortDescriptors = sortBy.descriptors
+                }
+            }
+        }
+    }
+
+    struct SelectedSort: Equatable {
+        var by = 0
+        var order = 0
+        var index: Int { by + order }
+    }
+
+    struct SortMenu: View {
+        @Binding private var selectedSort: SelectedSort
+
+        init(selection: Binding<SelectedSort>) {
+            _selectedSort = selection
+        }
+
+        var body: some View {
+            Menu {
+                Picker("Sort By", selection: $selectedSort.by) {
+                    ForEach(Array(stride(from: 0, to: sorts.count, by: 2)), id: \.self) { index in
+                        Text(sorts[index].name).tag(index)
+                    }
+                }
+                Picker("Sort Order", selection: $selectedSort.order) {
+                    let sortBy = sorts[selectedSort.by + selectedSort.order]
+                    let sortOrders = sortOrders(for: sortBy.name)
+                    ForEach(0..<sortOrders.count, id: \.self) { index in
+                        Text(sortOrders[index]).tag(index)
+                    }
+                }
+            } label: {
+                Label("More", systemImage: "ellipsis.circle")
+            }
+            .pickerStyle(InlinePickerStyle())
+        }
+        
+        private func sortOrders(for name: String) -> [String] {
+            switch name {
+            case "Magnitude":
+                return ["Highest to Lowest", "Lowest to Highest"]
+            case "Time":
+                return ["Newest on Top", "Oldest on Top"]
+            default:
+                return []
+            }
+        }
+    }
+}# <img align="center" height="70" src="./Docs/AppIcon.png"/> GitHub Copilot for Xcode
 
 <img alt="Demo of GitHub Copilot for Xcode" src="./Docs/demo.gif" width="800" />
 
