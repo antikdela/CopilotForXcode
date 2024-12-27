@@ -1,2 +1,2 @@
-Height Resolution 1136x5132
-Whigt Resolution 2891x1136
+Height 1136x5132
+Whigt 2891x1136
